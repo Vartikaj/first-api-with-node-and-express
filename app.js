@@ -10,7 +10,11 @@ const client = new MongoClient(uri)
 //add the database name and collection name for stablishing the collection
 const dbName = "bank"
 const collectionName = "accountUsers"
+const transferAccount = "transferAccount"
+
 const accountCollections = client.db(dbName).collection(collectionName)
+//const accountCollections = client.db(dbName).collection(transferAccount)
+
 
 const ConnectToDatabase = async () => {
     try{
@@ -23,22 +27,22 @@ const ConnectToDatabase = async () => {
 
 
 
-// const accountDetails = [{
-//     account_holder : "Vartika Johari",
-//     account_id : "PUNB0213456",
-//     account_type : "saving",
-//     balnace: 4700,
-//     last_updated: new Date(),
-// },
-// {
-//     account_holder : "Vrinda Mishra",
-//     account_id : "PUNB0213458",
-//     account_type : "saving",
-//     balnace: 4000,
-//     last_updated: new Date(),
-// }
+const accountDetails = [{
+    account_holder : "Yukti Awasthi",
+    account_id : "PUNB02134577",
+    account_type : "saving",
+    balnace: 4700,
+    last_updated: new Date(),
+},
+{
+    account_holder : "Shreya Shukla",
+    account_id : "PUNB0213448",
+    account_type : "saving",
+    balnace: 4000,
+    last_updated: new Date(),
+}
 
-// ]
+]
 
 //For multiple result based on condition
 //const documentToFind = {balnace: { $gt : 9000 }}
@@ -52,11 +56,17 @@ const ConnectToDatabase = async () => {
 const main = async () => {
     try{
         await ConnectToDatabase()
+
+        let result = await accountCollections.insertMany(accountDetails)
+        //let countData = await accountDetails.insertedCount(accountDetails)
+        console.log(`${(result.insertedCount)} Data Added Successfully!!!`)
         //For multiple result based on condition
-        //let result = accountCollections.find(documentToFind)
+        // let result = accountCollections.find(documentToFind)
         //==============
-        let documentToFind = {account_type: "saving"}
-        let updateFilter = { $push: { TransactionId: "TBAC00023456"} }
+
+        // let documentToFind = {account_type: "saving"}
+        // let updateFilter = { $push: { TransactionId: "TBAC00023456"} }
+        // let deleteFilter = { account_holder: "Vrinda Mishra" }
 
 
         //FOR DOING UPDATION IN THE SINGLE INSTANCE
@@ -71,19 +81,23 @@ const main = async () => {
         //===========================
 
         //UPDATE MULTIPLE DOCUMENT
-        let updateResult = await accountCollections.updateMany(documentToFind, updateFilter)
-        //let updateCount = await accountCollections.countDocuments(documentToFind)
-        updateResult.modifiedCount > 0 ? console.log(`upadte ${ updateResult.modifiedCount }`) : console.log(`No data has been updated`)
+        // let updateResult = await accountCollections.updateMany(documentToFind, updateFilter)
+        // updateResult.modifiedCount > 0 ? console.log(`upadte ${ updateResult.modifiedCount }`) : console.log(`No data has been updated`)
         //======================
 
-        let countData = accountCollections.countDocuments(documentToFind)
+        //DELETE MULTIPLE DOCUMENT
+        // let deleteResult = await accountCollections.deleteMany(deleteFilter)
+        // deleteResult.deletedCount > 0 ? console.log(`Delete ${ deleteResult.deletedCount }`) : console.log(`No data has been Deleted`)
+        //======================
+
+        // let countData = accountCollections.countDocuments(documentToFind)
         // for await (const doc of result) {
         //     console.log(doc)
         // }
-        console.log(updateResult)
-        console.log(`Found Data: ${await countData}`);
+        console.log(result)
+        // console.log(`Found Data: ${await countData}`);
     } catch (err) {
-        console.log(`Error Updating to the document : ${err}`);
+        console.log(`Error during insertion to the document : ${err}`);
     } finally {
         await client.close();
     }
